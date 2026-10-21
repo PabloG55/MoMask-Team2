@@ -1,0 +1,10 @@
+*.pyc
+checkpoints
+editing
+generation
+checkpoints/
+outputs/
+generation/
+.venv/
+.DS_Store
+__pycache__/
