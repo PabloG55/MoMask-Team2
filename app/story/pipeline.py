@@ -12,7 +12,7 @@ import numpy as np
 
 from story import narration
 from story.gltf import animation_glb, character_glb
-from story.motion import FPS, IK_ITERATIONS, speed_changes, to_frames, to_joints
+from story.motion import FPS, speed_changes, to_frames, to_joints
 from story.outputs import gzip_size, new_dir
 from story.orchestrator import plan_story
 from story.retarget import retarget
@@ -85,9 +85,7 @@ def run_story(
     t = time.time()
     joints = to_joints(features)
     bvh_path = os.path.join(out_dir, "story.bvh")
-    anim, _ = converter.convert(
-        joints, filename=bvh_path, iterations=IK_ITERATIONS, foot_ik=False
-    )
+    anim, _ = converter.convert(joints, bvh_path)
     timings["ik"] = round(time.time() - t, 2)
 
     t = time.time()

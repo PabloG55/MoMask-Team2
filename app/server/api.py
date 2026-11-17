@@ -16,7 +16,8 @@ import torch
 
 from server import APP_DIR
 from story import beats, narration
-from story.motion import FPS, IK_ITERATIONS, Models, generate_features, join
+from story.ik import Converter
+from story.motion import FPS, Models, generate_features, join
 from story.orchestrator import StoryError
 from story.outputs import new_dir
 from story.pipeline import run_story
@@ -25,7 +26,6 @@ from story.show import run_show
 from utils.motion_process import recover_from_ric
 from utils.paramUtil import t2m_kinematic_chain
 from utils.plot_script import plot_3d_motion
-from visualization.joints2bvh import Joint2BVHConvertor
 
 OUTPUT_DIR = "outputs"
 XBOT_SKELETON = os.path.join(APP_DIR, "story", "xbot_skeleton.json")
@@ -36,7 +36,7 @@ NUM_JOINTS = 22
 @dataclass
 class Loaded:
     models: Models
-    converter: Joint2BVHConvertor
+    converter: Converter
     xbot: TargetSkeleton
 
 
@@ -53,9 +53,7 @@ def start():
     from server.models import inside_momask, load_models  # heavy, only at startup
 
     with inside_momask():
-        _loaded = Loaded(
-            load_models(), Joint2BVHConvertor(), TargetSkeleton.load(XBOT_SKELETON)
-        )
+        _loaded = Loaded(load_models(), Converter(), TargetSkeleton.load(XBOT_SKELETON))
     narration.voice()
 
 
@@ -80,10 +78,7 @@ def generate(text, length_frames, seed):
     bvh_path = os.path.join(out_dir, "motion.bvh")
     mp4_path = os.path.join(out_dir, "motion.mp4")
 
-    # No foot IK (see story/show.py).
-    _, ik_joints = loaded().converter.convert(
-        joints, filename=bvh_path, iterations=IK_ITERATIONS, foot_ik=False
-    )
+    _, ik_joints = loaded().converter.convert(joints, bvh_path)
     plot_3d_motion(mp4_path, t2m_kinematic_chain, ik_joints, title=text, fps=FPS)
 
     stats = {

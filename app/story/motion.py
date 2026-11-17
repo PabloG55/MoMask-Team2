@@ -23,8 +23,6 @@ SEAM_MASK = 16
 # Frames blended with the original at the edges, because re-encoding changes them
 # slightly.
 SEAM_BLEND = 8
-# Fitting rotations to the joints: the authors' default; more iterations land no closer.
-IK_ITERATIONS = 10
 
 
 @dataclass

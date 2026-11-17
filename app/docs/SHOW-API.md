@@ -117,7 +117,7 @@ it and blinks every few seconds.
 ### Feet, arms and heads on a chibi body
 
 MoMask moves a human. These characters have a head about as big as the body and short arms,
-so the same motion can put a hand inside the head or the belly. Three fixes:
+so the same motion can put a hand inside the head or the belly. These are the fixes:
 
 - **No foot IK** (`foot_ik=False`, here and in `/story` and `/generate` too). MoMask's
   converter normally pins each planted foot to the floor (`remove_fs`), but it pins the ankle
@@ -131,22 +131,42 @@ so the same motion can put a hand inside the head or the belly. Three fixes:
   back or sideways is halved at the neck and the head; turning left and right is kept.
   MoMask's "stands and looks around" throws the head back about 55°, which on a chibi hides
   the face.
+- **Hips start from where the body faces** (`app/story/ik.py`). MoMask's converter starts every
+  frame's IK from zero rotations. Once the body has turned more than about 90°, the hips can
+  settle either way round, so an arm or a leg twists half a turn from one frame to the next.
+  Starting the hips from the way the shoulders and hips face keeps every frame close.
+- **Feet stay flat** (`level` in `app/story/retarget.py`). The IK only knows where the toe is,
+  so it leaves the roll of the foot to chance, and on the floor that shows as a foot standing
+  on its edge. Each foot keeps MoMask's turn around Y and its toe pitch (heel and toe lifts
+  stay) and loses the roll.
 - **Arms stay out of the body** (`app/story/collide.py`). Each character's head, chest, belly and
   thighs are superquadrics fitted to its own mesh by `app/tools/character_skeletons.py`, stored in
   `app/story/characters/<Name>.json`. On a frame where an arm enters any of them, the arm turns at
-  the shoulder by the smallest angle that clears all of them at once. The turn is never more
-  than 75° and is eased over the neighbouring frames. The elbow and wrist stay as MoMask made
-  them. `stats.arms_fixed` gives, per arm, how many frames were turned and the largest turn.
+  the shoulder by the smallest angle that clears all of them at once, and at the elbow when the
+  shoulder is not enough (a hand on a big helmet). The turns ease in and out over the
+  neighbouring frames. Each frame only keeps as much of its turn as leaves the arm no deeper
+  than before and no jumpier than MoMask made it (25° a frame, or MoMask's own step if that
+  is bigger). The shoulder turns at most 75° and the elbow 90°. `stats.arms_fixed` gives, per
+  arm, how many frames had it inside the body and the largest turn at the shoulder.
 
-Measured against each character's real mesh on the three examples (2026-11-15, without foot
-IK):
+Measured on 15 actions × 2 seeds × all 10 characters (300 motions, 2026-11-17), before and
+after the last three fixes:
 
-| | Hand more than 2 cm inside the body |
-|---|---|
-| MoMask's own skeleton | never (deepest 1 cm) |
-| Astronaut, Teddy, with the earlier head-and-chest fix | 61–69% of frames |
-| Same, now | 0–6% of frames, up to 4.6 cm |
-| All seven characters in the examples, now | 0–6%, except one Polybot arm brushing its thigh (16%, under 3 cm) |
+| | Before | After |
+|---|---|---|
+| Arm surface inside the body, worst motion | 19.1 cm | 9.3 cm |
+| Same, 90% of motions under | 1.5 cm | 0.3 cm |
+| Motions with an arm more than 2 cm in | 25 | 16 |
+| Biggest arm jump between two frames | 77.7° | 45.1° (the same as with no arm fix at all) |
+| Most the arm fix adds to a jump | 43.1° | 10.3° |
+| Biggest foot jump between two frames | 103° | 28.7° |
+| Foot roll on the floor, 90% of motions under (median per motion) | 26.1° | 14.4° |
+| Deepest a foot goes under the floor | 3.7 cm | 2.8 cm |
+
+What is left: 14 of the 16 are Astronaut and DinoKid, the two biggest heads, mostly with a hand
+on or over the head (scratching, clapping, waving), where clearing it would take more than the
+75° the shoulder may turn, or a jump the rule above does not allow. The feet still slide as much
+as on MoMask's own skeleton (median 3.6 cm/s).
 
 So the problem was the retarget onto a chibi body, not the model.
 
@@ -156,18 +176,17 @@ On a Mac CPU, JSON shows (no LLM):
 
 | Show | Length | Server time | Sent to the viewer | Same show as 720p video (2.5 Mbit/s) |
 |---|---|---|---|---|
-| Dino's big jump (2 characters) | 31.6 s | 27.9 s | 455 KB | 9.9 MB (22×) |
-| A walk on the moon (3) | 30.0 s | 32.6 s | 525 KB | 9.4 MB (18×) |
-| El baile de Froggy (2, Spanish) | 19.2 s | 11.7 s | 278 KB | 6.0 MB (22×) |
+| Dino's big jump (2 characters) | 31.6 s | 13.5 s | 470 KB | 9.9 MB (21×) |
+| A walk on the moon (3) | 30.0 s | 16.3 s | 545 KB | 9.4 MB (17×) |
+| El baile de Froggy (2, Spanish) | 19.2 s | 6.6 s | 288 KB | 6.0 MB (21×) |
 
 "Sent" is the motion `.glb`s gzipped, plus the `.mp3` and the timeline. The same Dino show
-rendered to an actual 720p H.264 file (crf 20) is 5.5 MB. About half of the server time was
+rendered to an actual 720p H.264 file (crf 20) is 5.5 MB. About a third of the server time is
 IK and retargeting; IK now runs 10 iterations instead of 100 (the authors' default, just as
 close), which takes about 0.7 s off each character.
-Keeping the arms out of the body is up to about 2 s per character of that. These times are
-from 2026-11-15, while another program was using the same CPU heavily (load average 9–10 on
-this Mac), so they move by several seconds between runs; an earlier quiet run, before the arm
-fix, took 16.3, 22.1 and 9.7 s.
+Keeping the arms out of the body adds about 0.2 s per character, because it checks every
+frame at once. These times are from 2026-11-17; on 2026-11-15, with another program using the
+same CPU heavily, the same shows took 27.9, 32.6 and 11.7 s.
 
 ## Errors
 

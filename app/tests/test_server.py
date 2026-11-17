@@ -13,15 +13,13 @@ from story import outputs
 
 
 class FakeConverter:
-    """Stands in for Joint2BVHConvertor: writes a BVH and records how it was called."""
+    """Stands in for story.ik.Converter: writes a BVH and records the frames."""
 
     def __init__(self):
         self.calls = []
 
-    def convert(self, joints, filename, iterations=10, foot_ik=True):
-        self.calls.append(
-            {"frames": len(joints), "iterations": iterations, "foot_ik": foot_ik}
-        )
+    def convert(self, joints, filename):
+        self.calls.append(len(joints))
         with open(filename, "w") as f:
             f.write("HIERARCHY\n")
         return None, joints
@@ -75,7 +73,7 @@ def test_generate_writes_each_request_to_its_own_folder(fake_server):
         assert stats["frames"] == 40
         assert stats["bvh_bytes"] == os.path.getsize(bvh)
         assert stats["mp4_bytes"] == os.path.getsize(mp4)
-    assert [c["foot_ik"] for c in converter.calls] == [False, False]
+    assert converter.calls == [40, 40]
 
 
 def test_a_bad_story_is_a_readable_error(fake_server):

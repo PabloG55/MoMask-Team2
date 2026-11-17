@@ -128,6 +128,30 @@ def qbetween(u, v):
     return q / np.linalg.norm(q)
 
 
+def qaxis(axis, angles):
+    """Rotations by `angles` (radians) about one axis."""
+    half = np.asarray(angles)[..., None] / 2
+    return np.concatenate([np.cos(half), np.sin(half) * axis], axis=-1)
+
+
+def level(rotations, toe):
+    """Foot rotations (from MoMask's rest pose) with the roll taken out: the same turn
+    around Y and the same toe pitch, the sole level from side to side.
+
+    The IK only knows where the toe is, so it leaves the foot's roll to chance; on the
+    floor that shows as a foot standing on its edge. The turn around Y comes from the
+    rotation, not from where the toe points, because a toe pointing down (a kick, a
+    dance step) says nothing about which way the foot faces.
+    """
+    yaw = 2 * np.arctan2(rotations[:, 2], rotations[:, 0])
+    toe = toe / np.linalg.norm(toe)
+    now = qrotate(rotations, np.broadcast_to(toe, rotations.shape[:-1] + (3,)))
+    pitch = np.arcsin(np.clip(now[:, 1], -1, 1)) - np.arcsin(toe[1])
+    heading = np.arctan2(toe[0], toe[2])
+    across = np.array([np.cos(heading), 0.0, -np.sin(heading)])
+    return qmul(qaxis(np.array([0.0, 1.0, 0.0]), yaw), qaxis(across, -pitch))
+
+
 def turn_around(q):
     """The same rotation seen from a frame turned 180 degrees about Y."""
     return q * np.array([1.0, -1.0, 1.0, -1.0])
@@ -426,7 +450,24 @@ def retarget(anim, skeleton):
             correction = qbetween(offsets[child], source_dir)
         target_global[:, b] = qmul(source_global[:, names.index(source)], correction)
 
-    # 3. Back to local rotations, which is what the animation stores.
+    # 3. Feet flat from side to side, starting from the character's own rest pose; the
+    # toes keep their rest bend.
+    _, rest_global = skeleton.forward_kinematics(
+        rest_rotations[None], np.zeros((1, 3)), offsets, with_rotations=True
+    )
+    rest_global = rest_global[0]
+    for side in ("Left", "Right"):
+        foot, toe = skeleton.bone(side + "Foot"), skeleton.bone(side + "Toe")
+        if foot is None:
+            continue
+        source = source_global[:, names.index(side + "Foot")]
+        toe_offset = anim.offsets[names.index(side + "Toe")]
+        target_global[:, foot] = qmul(level(source, toe_offset), rest_global[foot])
+        if toe is not None:
+            toe_rest = qmul(qinv(rest_global[foot]), rest_global[toe])
+            target_global[:, toe] = qmul(target_global[:, foot], toe_rest)
+
+    # 4. Back to local rotations, which is what the animation stores.
     target_local = np.zeros_like(target_global)
     for b, p in enumerate(skeleton.parents):
         target_local[:, b] = (
@@ -438,7 +479,7 @@ def retarget(anim, skeleton):
         target_local / np.linalg.norm(target_local, axis=-1, keepdims=True)
     )
 
-    # 4. Hips: MoMask's metres scaled to the character's leg length, feet on the floor.
+    # 5. Hips: MoMask's metres scaled to the character's leg length, feet on the floor.
     source_leg = sum(np.linalg.norm(anim.offsets[names.index(j)]) for j in LEG)
     scale = skeleton.leg_length() / source_leg
     hips = anim.positions[:, 0] * scale

@@ -28,6 +28,7 @@ from story.retarget import (
     BONE_MAP,
     DIRECTION_CHILD,
     TargetSkeleton,
+    level,
     qbetween,
     qrotate,
     read_glb,
@@ -77,12 +78,15 @@ def test_skeleton_json_matches_the_glb(skeleton):
 
 
 def test_every_xbot_bone_points_where_the_momask_bone_points(skeleton):
+    """All but the feet, which start from Xbot's own rest bend (see the next test)."""
     anim = random_pose()
     rotations, hips = retarget(anim, skeleton)
     source = Animation.positions_global(anim)
     target = skeleton.forward_kinematics(rotations, hips)
     names = list(anim.names)
     for bone, child in DIRECTION_CHILD.items():
+        if bone.endswith("Foot"):
+            continue
         s = source[:, names.index(child)] - source[:, names.index(bone)]
         t = (
             target[:, skeleton.index[BONE_MAP[child]]]
@@ -92,6 +96,31 @@ def test_every_xbot_bone_points_where_the_momask_bone_points(skeleton):
             np.sum(s * t, -1) / np.linalg.norm(s, axis=-1) / np.linalg.norm(t, axis=-1)
         )
         assert cos.min() > 0.99999, bone
+
+
+def test_a_level_foot_keeps_its_toe_pitch_and_loses_its_roll():
+    from story.retarget import qaxis, qmul
+
+    rng = np.random.default_rng(0)
+    n = 200
+    up = np.array([0.0, 1.0, 0.0])
+    toe = np.array([0.02, -0.05, 0.12])
+    across = np.array([toe[2], 0.0, -toe[0]]) / np.hypot(toe[0], toe[2])
+    yaw = qaxis(up, rng.uniform(-np.pi, np.pi, n))
+    pitch = qaxis(across, rng.uniform(-np.radians(40), np.radians(40), n))
+
+    # A foot that only turns and pitches is left as it is.
+    flat = level(qmul(yaw, pitch), toe)
+    assert np.allclose(np.abs(np.sum(flat * qmul(yaw, pitch), -1)), 1)
+
+    # Any other tilt: the toe keeps its pitch and the sole ends up level.
+    tilt = rng.uniform(0, 2 * np.pi, n)
+    axes = np.stack([np.cos(tilt), np.zeros(n), np.sin(tilt)], axis=1)
+    rotations = qmul(yaw, qaxis(axes, rng.uniform(-np.radians(40), np.radians(40), n)))
+    flat = level(rotations, toe)
+    unit = np.broadcast_to(toe / np.linalg.norm(toe), (n, 3))
+    assert np.allclose(qrotate(flat, unit)[:, 1], qrotate(rotations, unit)[:, 1])
+    assert np.allclose(qrotate(flat, np.broadcast_to(across, (n, 3)))[:, 1], 0)
 
 
 def test_feet_end_up_on_the_floor(skeleton):

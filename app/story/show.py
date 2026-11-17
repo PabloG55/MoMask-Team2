@@ -12,7 +12,7 @@ from story import beats, narration
 from story.collide import avoid_self_penetration
 from story.director import plan_show
 from story.gltf import animation_glb
-from story.motion import FPS, IK_ITERATIONS, to_joints
+from story.motion import FPS, to_joints
 from story.outputs import gzip_size, new_dir
 from story.retarget import TargetSkeleton, retarget, soften_nods
 
@@ -263,11 +263,7 @@ def run_show(
     motions, cast_info, collide_stats, bvh_bytes = [], [], {}, 0
     for name, x in zip(cast, slots(cast)):
         bvh_path = os.path.join(out_dir, f"{name}.bvh")
-        # No foot IK: remove_fs pins the ankle and the toe separately and can swing a
-        # foot round.
-        anim, _ = converter.convert(
-            joints[name], filename=bvh_path, iterations=IK_ITERATIONS, foot_ik=False
-        )
+        anim, _ = converter.convert(joints[name], bvh_path)
         bvh_bytes += os.path.getsize(bvh_path)
         skeleton = load_skeleton(name, skeletons)
         rotations, hips = retarget(soften_nods(anim, NOD_KEEP), skeleton)

@@ -193,7 +193,7 @@ def test_an_arm_through_the_head_is_pushed_out(dino, aim):
     assert worst_depth(dino, fixed, hips) < before / 3
     assert stats["frames_fixed"]["Left"] == len(rotations)
     assert stats["max_degrees"]["Left"] <= MAX_DEGREES + 0.5
-    # Only the shoulder turns: elbow, wrist and everything else keep their rotations.
+    # The shoulder is enough here: elbow, wrist and everything else keep their rotations.
     others = [b for b in range(len(dino.names)) if b != arm]
     assert np.allclose(fixed[:, others], rotations[:, others])
     assert np.allclose(np.linalg.norm(fixed, axis=-1), 1)
@@ -218,6 +218,31 @@ def test_a_hand_in_the_belly_comes_out_without_crossing():
     fixed, stats = avoid_self_penetration(astro, rotations, hips)
     assert worst_depth(astro, fixed, hips) <= 0.01
     assert stats["max_degrees"]["Right"] < MAX_DEGREES
+
+
+def test_an_arm_swinging_through_the_belly_comes_out_without_jumping():
+    from story.collide import MAX_STEP, Body, avoid_self_penetration, worst_depth
+
+    astro = from_vrm("Astronaut")
+    frames = 40
+    rotations, hips = rest_pose(astro, frames)
+    positions = astro.forward_kinematics(rotations, hips)
+    arm, forearm = astro.bone("RightArm"), astro.bone("RightForeArm")
+    belly = next(s for s in astro.body["shapes"] if s["bone"].endswith("Hips"))
+    middle = positions[0, astro.index[belly["bone"]]] + np.array(belly["center"])
+    # The hand sweeps from one side of the belly to the other and back.
+    sweep = 0.25 * np.sin(np.linspace(0, 2 * np.pi, frames))
+    for f in range(frames):
+        target = middle + [sweep[f], 0.0, 0.0] - positions[0, arm]
+        rotations[f, arm] = qbetween(astro.offsets[forearm], target)
+    before = worst_depth(astro, rotations, hips)
+    assert before > 0.3
+
+    fixed, _ = avoid_self_penetration(astro, rotations, hips)
+    assert worst_depth(astro, fixed, hips) < before / 3
+    steps = Body(astro, fixed, hips).steps("Right")
+    allowed = np.maximum(Body(astro, rotations, hips).steps("Right"), MAX_STEP)
+    assert np.all(steps <= allowed + 1)
 
 
 def test_soften_nods_halves_a_nod_and_keeps_a_turn():
