@@ -1,0 +1,173 @@
+{
+ "id": "space",
+ "name": "Moon",
+ "description": "The surface of the moon, with rocks, a rocket and stars.",
+ "light": "night",
+ "ground": {
+  "color": "#a7a7b0",
+  "size": 80
+ },
+ "background": "#05060f",
+ "stars": true,
+ "planet": {
+  "color": "#3f7fe0",
+  "position": [
+   -16,
+   11,
+   -40
+  ],
+  "radius": 3.2
+ },
+ "props": [
+  {
+   "model": "models/space-rocket_baseA.glb",
+   "position": [
+    6.4,
+    0.0,
+    -6.5
+   ],
+   "rotationY": 0,
+   "scale": 2.5
+  },
+  {
+   "model": "models/space-rocket_fuelA.glb",
+   "position": [
+    6.4,
+    4.0,
+    -6.5
+   ],
+   "rotationY": 0,
+   "scale": 2.5
+  },
+  {
+   "model": "models/space-rocket_sidesA.glb",
+   "position": [
+    6.4,
+    5.25,
+    -6.5
+   ],
+   "rotationY": 0,
+   "scale": 2.5
+  },
+  {
+   "model": "models/space-rocket_topA.glb",
+   "position": [
+    6.4,
+    7.75,
+    -6.5
+   ],
+   "rotationY": 0,
+   "scale": 2.5
+  },
+  {
+   "model": "models/space-hangar_roundGlass.glb",
+   "position": [
+    -6.8,
+    0.0,
+    -7.5
+   ],
+   "rotationY": 0,
+   "scale": 2.5
+  },
+  {
+   "model": "models/space-satelliteDish_large.glb",
+   "position": [
+    -4.3,
+    0.0,
+    -2.9
+   ],
+   "rotationY": 30,
+   "scale": 2.2
+  },
+  {
+   "model": "models/space-rover.glb",
+   "position": [
+    4.2,
+    0.0,
+    -1.1
+   ],
+   "rotationY": -40,
+   "scale": 2.5
+  },
+  {
+   "model": "models/space-crater.glb",
+   "position": [
+    -3.9,
+    0.0,
+    1.3
+   ],
+   "rotationY": 0,
+   "scale": 3.0
+  },
+  {
+   "model": "models/space-craterLarge.glb",
+   "position": [
+    2.4,
+    0.0,
+    -4.0
+   ],
+   "rotationY": 0,
+   "scale": 3.0
+  },
+  {
+   "model": "models/space-rock_crystalsLargeA.glb",
+   "position": [
+    4.7,
+    0.0,
+    1.6
+   ],
+   "rotationY": 60,
+   "scale": 2.0
+  },
+  {
+   "model": "models/space-rock_largeA.glb",
+   "position": [
+    -5.6,
+    0.0,
+    0.4
+   ],
+   "rotationY": 0,
+   "scale": 2.0
+  },
+  {
+   "model": "models/space-meteor_detailed.glb",
+   "position": [
+    1.4,
+    0.0,
+    -7.5
+   ],
+   "rotationY": 20,
+   "scale": 2.5
+  },
+  {
+   "model": "models/space-rock_crystalsLargeA.glb",
+   "position": [
+    -1.6,
+    0.0,
+    -5.6
+   ],
+   "rotationY": 0,
+   "scale": 2.2
+  },
+  {
+   "model": "models/space-craterLarge.glb",
+   "position": [
+    -8.0,
+    0.0,
+    -3.0
+   ],
+   "rotationY": 0,
+   "scale": 3.5
+  },
+  {
+   "model": "models/space-rock_largeA.glb",
+   "position": [
+    8.6,
+    0.0,
+    0.5
+   ],
+   "rotationY": 90,
+   "scale": 2.5
+  }
+ ]
+}

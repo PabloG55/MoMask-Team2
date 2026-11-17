@@ -1,0 +1,12 @@
+{
+ "id": "stage",
+ "name": "Stage",
+ "description": "An empty white stage, like Pocoyo: nothing but the characters.",
+ "light": "studio",
+ "ground": {
+  "color": "#f4f4ef",
+  "size": 80,
+  "shadowOnly": true
+ },
+ "props": []
+}

@@ -1,0 +1,99 @@
+<!doctype html>
+<!--
+  Retargeting check: the MoMask skeleton (BVH) next to Xbot playing the retargeted clip, at
+  several moments of the motion, in one image. Serve the repo folder and open
+    tools/preview.html?glb=<motion.glb>&bvh=<motion.bvh>&times=0,1,2,3
+  It uses the same Xbot.glb and three.js version as the client.
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Retarget preview</title>
+  <style>
+    body { margin: 0; background: #f4f1ea; font: 13px system-ui, sans-serif; color: #222; }
+    #sheet { display: block; }
+    #status { position: fixed; top: 6px; left: 8px; }
+  </style>
+  <script type="importmap">
+    {"imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.179.1/examples/jsm/"
+    }}
+  </script>
+</head>
+<body>
+<canvas id="sheet"></canvas>
+<div id="status">loading…</div>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { BVHLoader } from 'three/addons/loaders/BVHLoader.js';
+
+const params = new URLSearchParams(location.search);
+const times = (params.get('times') || '0,1,2,3').split(',').map(Number);
+const view = params.get('view') || 'front';   // front | side
+const W = Number(params.get('w') || 360), H = Number(params.get('h') || 420);
+const zoom = Number(params.get('zoom') || 1);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf4f1ea);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x887766, 2.2));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+sun.position.set(2, 4, 3);
+scene.add(sun);
+const grid = new THREE.GridHelper(10, 20, 0x999999, 0xcccccc);
+scene.add(grid);
+
+const xbot = (await new GLTFLoader().loadAsync('../client/docs/assets/character/Xbot.glb')).scene;
+scene.add(xbot);
+const clip = (await new GLTFLoader().loadAsync(params.get('glb'))).animations[0];
+const mixer = new THREE.AnimationMixer(xbot);
+mixer.clipAction(clip).play();
+
+// The MoMask skeleton, 1.2 m to the character's right, so the two can be compared.
+let bvhMixer = null, bvhRoot = null;
+if (params.get('bvh')) {
+  const bvh = new BVHLoader().parse(await (await fetch(params.get('bvh'))).text());
+  bvhRoot = new THREE.Group();
+  // BVHLoader adds the root's OFFSET to every frame; MoMask's own code doesn't, so take it
+  // back out or the skeleton sits 22 cm lower than MoMask meant.
+  const offset = bvh.skeleton.bones[0].position.clone();
+  bvhRoot.add(bvh.skeleton.bones[0]);
+  bvhRoot.position.set(-1.2 - offset.x, -offset.y, -offset.z);
+  const helper = new THREE.SkeletonHelper(bvh.skeleton.bones[0]);
+  helper.material.linewidth = 3;
+  scene.add(bvhRoot, helper);
+  bvhMixer = new THREE.AnimationMixer(bvh.skeleton.bones[0]);
+  bvhMixer.clipAction(bvh.clip).play();
+}
+
+const camera = new THREE.PerspectiveCamera(35, W / H, 0.1, 50);
+const hips = xbot.getObjectByName('mixamorigHips');
+const sheet = document.getElementById('sheet');
+sheet.width = W * times.length;
+sheet.height = H;
+const ctx = sheet.getContext('2d');
+
+times.forEach((t, i) => {
+  mixer.setTime(t);
+  if (bvhMixer) bvhMixer.setTime(t);
+  scene.updateMatrixWorld(true);
+  const p = new THREE.Vector3();
+  hips.getWorldPosition(p);
+  const target = new THREE.Vector3(p.x - (bvhRoot ? 0.6 : 0), 0.9, p.z);
+  const d = 5.2 / zoom;
+  if (view === 'side') camera.position.set(target.x + d, 1.3, target.z);
+  else camera.position.set(target.x, 1.3, target.z + d);
+  camera.lookAt(target);
+  renderer.render(scene, camera);
+  ctx.drawImage(renderer.domElement, i * W, 0);
+  ctx.fillStyle = '#222';
+  ctx.fillText(`t = ${t.toFixed(2)} s`, i * W + 10, H - 12);
+});
+document.getElementById('status').textContent = `${clip.duration.toFixed(2)} s clip, ${clip.tracks.length} tracks`;
+document.body.dataset.ready = '1';
+</script>
+</body>
+</html>

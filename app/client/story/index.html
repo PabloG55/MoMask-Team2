@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MoMask Show</title>
+  <meta name="description" content="Pocoyo-style shows: a story becomes characters that move, talk and take turns. ITCS 6166 Team 2.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.179.1/examples/jsm/",
+        "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.5.5/lib/three-vrm.module.min.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <h1>MoMask Show</h1>
+        <p>A story in, a show out: MoMask moves the characters, the receiver draws them.</p>
+      </div>
+    </div>
+    <a class="team" href="https://huggingface.co/spaces/pgarces/MoMask-Team2" target="_blank" rel="noopener">ITCS 6166 · Team 2</a>
+  </header>
+
+  <main class="layout">
+    <section class="stage" aria-label="Show">
+      <div class="screen" id="screen">
+        <canvas id="view"></canvas>
+        <div class="titlecard" id="titlecard"><span id="title-text"></span></div>
+        <div class="subtitles" id="subtitles" aria-live="polite"></div>
+        <div class="empty" id="empty">
+          <p>Pick a story and press <b>Play</b>.</p>
+        </div>
+        <div class="busy" id="busy" hidden><span class="spinner"></span><span id="busy-text">Making the show…</span></div>
+      </div>
+      <div class="transport">
+        <button id="play" class="round" aria-label="Play" disabled>
+          <svg viewBox="0 0 24 24" class="i-play"><path d="M8 5.5v13l11-6.5z"/></svg>
+          <svg viewBox="0 0 24 24" class="i-pause"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        </button>
+        <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Time" disabled>
+        <span id="clock" class="clock">0:00 / 0:00</span>
+        <label class="toggle"><input type="checkbox" id="free"> Free camera</label>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="card">
+        <label for="example" class="label">Story</label>
+        <select id="example"></select>
+        <textarea id="story" rows="9" spellcheck="false"
+          placeholder="Write a story (needs the Space's OpenAI key) or paste a show as JSON."></textarea>
+        <div class="row">
+          <button id="saved" class="secondary">Play saved show</button>
+          <button id="make" class="primary">Make it live</button>
+        </div>
+        <div class="row small">
+          <label>Seed <input id="seed" type="number" value="42"></label>
+          <label class="grow">Space <input id="space" type="text" value="pgarces/MoMask-Team2"></label>
+        </div>
+        <p id="status" class="status" role="status"></p>
+      </div>
+
+      <div class="card" id="netcard" hidden>
+        <h2>What crossed the network</h2>
+        <div id="net"></div>
+        <p class="note" id="net-note"></p>
+      </div>
+
+      <div class="card" id="castcard" hidden>
+        <h2>Cast and camera</h2>
+        <div id="castlist"></div>
+      </div>
+    </aside>
+  </main>
+
+  <audio id="voices" preload="auto"></audio>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

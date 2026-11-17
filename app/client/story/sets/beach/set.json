@@ -1,0 +1,176 @@
+{
+ "id": "beach",
+ "name": "Beach",
+ "description": "A sandy beach with palm trees, a treasure chest and a pirate ship at sea.",
+ "light": "day",
+ "ground": {
+  "color": "#f2dca4",
+  "size": 80
+ },
+ "water": {
+  "color": "#3fa7d6",
+  "z": -8.0
+ },
+ "props": [
+  {
+   "model": "models/pirate-palm-straight.glb",
+   "position": [
+    -5.2,
+    0.0,
+    -3.6
+   ],
+   "rotationY": 0,
+   "scale": 1.0
+  },
+  {
+   "model": "models/pirate-palm-bend.glb",
+   "position": [
+    5.0,
+    0.0,
+    -2.6
+   ],
+   "rotationY": -30,
+   "scale": 1.0
+  },
+  {
+   "model": "models/pirate-palm-straight.glb",
+   "position": [
+    7.8,
+    0.0,
+    -6.0
+   ],
+   "rotationY": 50,
+   "scale": 1.1
+  },
+  {
+   "model": "models/pirate-palm-bend.glb",
+   "position": [
+    -8.4,
+    0.0,
+    -1.0
+   ],
+   "rotationY": 160,
+   "scale": 1.0
+  },
+  {
+   "model": "models/pirate-palm-detailed-straight.glb",
+   "position": [
+    -10.5,
+    0.0,
+    -6.5
+   ],
+   "rotationY": 0,
+   "scale": 1.1
+  },
+  {
+   "model": "models/pirate-palm-detailed-bend.glb",
+   "position": [
+    10.5,
+    0.0,
+    -1.5
+   ],
+   "rotationY": -80,
+   "scale": 1.0
+  },
+  {
+   "model": "models/pirate-chest.glb",
+   "position": [
+    3.9,
+    0.0,
+    -0.7
+   ],
+   "rotationY": -30,
+   "scale": 0.6
+  },
+  {
+   "model": "models/pirate-barrel.glb",
+   "position": [
+    -3.9,
+    0.0,
+    -1.2
+   ],
+   "rotationY": 0,
+   "scale": 0.55
+  },
+  {
+   "model": "models/pirate-barrel.glb",
+   "position": [
+    -4.7,
+    0.0,
+    -0.3
+   ],
+   "rotationY": 40,
+   "scale": 0.5
+  },
+  {
+   "model": "models/pirate-crate.glb",
+   "position": [
+    -4.5,
+    0.0,
+    -2.2
+   ],
+   "rotationY": 15,
+   "scale": 0.55
+  },
+  {
+   "model": "models/pirate-rocks-sand-a.glb",
+   "position": [
+    7.0,
+    0.0,
+    -5.5
+   ],
+   "rotationY": 0,
+   "scale": 0.6
+  },
+  {
+   "model": "models/pirate-rocks-sand-b.glb",
+   "position": [
+    -7.0,
+    0.0,
+    -6.0
+   ],
+   "rotationY": 60,
+   "scale": 0.5
+  },
+  {
+   "model": "models/pirate-flag-pirate.glb",
+   "position": [
+    4.6,
+    0.0,
+    -3.8
+   ],
+   "rotationY": 20,
+   "scale": 0.9
+  },
+  {
+   "model": "models/pirate-patch-sand-foliage.glb",
+   "position": [
+    -6.0,
+    0.0,
+    2.5
+   ],
+   "rotationY": 0,
+   "scale": 0.5
+  },
+  {
+   "model": "models/pirate-ship-pirate-large.glb",
+   "position": [
+    -17.0,
+    0.0,
+    -48.0
+   ],
+   "rotationY": 70,
+   "scale": 1.0
+  },
+  {
+   "model": "models/pirate-boat-row-small.glb",
+   "position": [
+    6.5,
+    0.0,
+    -9.5
+   ],
+   "rotationY": 30,
+   "scale": 0.7
+  }
+ ]
+}
