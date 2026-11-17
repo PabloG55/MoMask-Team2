@@ -41,8 +41,9 @@ class Loaded:
 
 
 @spaces.GPU
-def _gpu_stub():
-    """Never called. A ZeroGPU Space won't start without one GPU function."""
+def gpu_stub():
+    """Never called. ZeroGPU won't start a Space unless a @spaces.GPU function is wired
+    to a Gradio event, so ui.build() wires this one to a hidden button."""
 
 
 _loaded = None

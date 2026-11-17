@@ -122,4 +122,9 @@ def build():
                 api_name="generate",
             )
 
+        # Everything runs on the CPU, but ZeroGPU only starts a Space with a
+        # @spaces.GPU function wired to an event. Hidden, never clicked.
+        gpu_button = gr.Button(visible=False)
+        gpu_button.click(api.gpu_stub, api_visibility="private")
+
     return demo

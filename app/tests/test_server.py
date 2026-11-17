@@ -54,6 +54,13 @@ def test_page_exposes_the_three_apis():
     assert public == {"generate", "story", "show"}
 
 
+def test_the_gpu_stub_is_wired_but_not_public():
+    """ZeroGPU looks for a @spaces.GPU function among the page's events at startup."""
+    demo = ui.build()
+    stub = [fn for fn in demo.fns.values() if fn.fn is api.gpu_stub]
+    assert len(stub) == 1 and stub[0].api_visibility == "private"
+
+
 def test_nothing_is_loaded_before_start():
     assert api._loaded is None
     with pytest.raises(RuntimeError, match="start"):
