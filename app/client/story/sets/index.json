@@ -1,0 +1,27 @@
+[
+ {
+  "id": "stage",
+  "name": "Stage",
+  "description": "An empty white stage, like Pocoyo: nothing but the characters."
+ },
+ {
+  "id": "park",
+  "name": "Park",
+  "description": "A sunny park with trees, bushes and flowers."
+ },
+ {
+  "id": "room",
+  "name": "Room",
+  "description": "A cosy kid's room with a sofa, a rug, shelves and toys."
+ },
+ {
+  "id": "beach",
+  "name": "Beach",
+  "description": "A sandy beach with palm trees, a treasure chest and a pirate ship at sea."
+ },
+ {
+  "id": "space",
+  "name": "Moon",
+  "description": "The surface of the moon, with rocks, a rocket and stars."
+ }
+]

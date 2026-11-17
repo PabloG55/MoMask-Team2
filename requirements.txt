@@ -6,3 +6,6 @@ scipy
 matplotlib
 huggingface_hub
 spaces
+openai==3.51.0
+python-dotenv==1.2.4
+kokoro-onnx==0.6.1

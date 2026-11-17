@@ -1,0 +1,263 @@
+{
+ "id": "room",
+ "name": "Room",
+ "description": "A cosy kid's room with a sofa, a rug, shelves and toys.",
+ "light": "day",
+ "ground": {
+  "color": "#d9b48a",
+  "size": 17
+ },
+ "background": "#efe3d0",
+ "props": [
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    -6.9,
+    0.0,
+    -3.3
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wallWindow.glb",
+   "position": [
+    -4.6,
+    0.0,
+    -3.3
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    -2.3,
+    0.0,
+    -3.3
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    0.0,
+    0.0,
+    -3.3
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    2.3,
+    0.0,
+    -3.3
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wallWindow.glb",
+   "position": [
+    4.6,
+    0.0,
+    -3.3
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    6.9,
+    0.0,
+    -3.3
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    -8.05,
+    0.0,
+    -2.15
+   ],
+   "rotationY": -90,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    -8.05,
+    0.0,
+    0.15
+   ],
+   "rotationY": -90,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    -8.05,
+    0.0,
+    2.45
+   ],
+   "rotationY": -90,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    8.05,
+    0.0,
+    -2.15
+   ],
+   "rotationY": 90,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    8.05,
+    0.0,
+    0.15
+   ],
+   "rotationY": 90,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-wall.glb",
+   "position": [
+    8.05,
+    0.0,
+    2.45
+   ],
+   "rotationY": 90,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-rugRound.glb",
+   "position": [
+    0.0,
+    0.0,
+    0.3
+   ],
+   "rotationY": 0,
+   "scale": 2.9
+  },
+  {
+   "model": "models/furniture-loungeSofa.glb",
+   "position": [
+    -4.4,
+    0.0,
+    -2.75
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-tableCoffee.glb",
+   "position": [
+    -4.4,
+    0.0,
+    -1.1
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-lampRoundFloor.glb",
+   "position": [
+    -6.6,
+    0.0,
+    -2.8
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-bear.glb",
+   "position": [
+    -6.4,
+    0.0,
+    -1.0
+   ],
+   "rotationY": 35,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-cabinetTelevision.glb",
+   "position": [
+    1.6,
+    0.0,
+    -3.0
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-televisionVintage.glb",
+   "position": [
+    1.6,
+    0.72,
+    -3.0
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-bookcaseOpen.glb",
+   "position": [
+    4.3,
+    0.0,
+    -3.0
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-bookcaseOpen.glb",
+   "position": [
+    5.3,
+    0.0,
+    -3.0
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-pottedPlant.glb",
+   "position": [
+    6.8,
+    0.0,
+    -2.7
+   ],
+   "rotationY": 0,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-cardboardBoxOpen.glb",
+   "position": [
+    5.6,
+    0.0,
+    -0.6
+   ],
+   "rotationY": -20,
+   "scale": 2.3
+  },
+  {
+   "model": "models/furniture-pottedPlant.glb",
+   "position": [
+    -2.0,
+    0.0,
+    -3.0
+   ],
+   "rotationY": 0,
+   "scale": 2.0
+  }
+ ]
+}

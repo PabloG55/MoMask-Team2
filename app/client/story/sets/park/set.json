@@ -1,0 +1,292 @@
+{
+ "id": "park",
+ "name": "Park",
+ "description": "A sunny park with trees, bushes and flowers.",
+ "light": "day",
+ "ground": {
+  "color": "#8cc96b",
+  "size": 80
+ },
+ "props": [
+  {
+   "model": "models/nature-tree_default.glb",
+   "position": [
+    -5.5,
+    0.0,
+    -4.5
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_oak.glb",
+   "position": [
+    5.0,
+    0.0,
+    -5.0
+   ],
+   "rotationY": 40,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_fat.glb",
+   "position": [
+    -2.2,
+    0.0,
+    -7.5
+   ],
+   "rotationY": 15,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_detailed.glb",
+   "position": [
+    2.6,
+    0.0,
+    -8.0
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_default.glb",
+   "position": [
+    8.2,
+    0.0,
+    -2.8
+   ],
+   "rotationY": 70,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_oak.glb",
+   "position": [
+    -8.6,
+    0.0,
+    -2.0
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_fat.glb",
+   "position": [
+    7.0,
+    0.0,
+    1.0
+   ],
+   "rotationY": 120,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_detailed.glb",
+   "position": [
+    -6.8,
+    0.0,
+    1.2
+   ],
+   "rotationY": 200,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_default.glb",
+   "position": [
+    -11.0,
+    0.0,
+    -7.0
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-tree_oak.glb",
+   "position": [
+    11.0,
+    0.0,
+    -7.5
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-plant_bushLarge.glb",
+   "position": [
+    -3.7,
+    0.0,
+    -2.6
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-plant_bush.glb",
+   "position": [
+    3.9,
+    0.0,
+    -2.4
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-plant_bushLarge.glb",
+   "position": [
+    0.8,
+    0.0,
+    -4.4
+   ],
+   "rotationY": 30,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-plant_bush.glb",
+   "position": [
+    -1.4,
+    0.0,
+    -4.6
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-plant_bushLarge.glb",
+   "position": [
+    5.4,
+    0.0,
+    -0.2
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-plant_bush.glb",
+   "position": [
+    -5.2,
+    0.0,
+    -1.2
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-flower_redA.glb",
+   "position": [
+    -3.5,
+    0.0,
+    -1.0
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-flower_yellowA.glb",
+   "position": [
+    3.6,
+    0.0,
+    -0.6
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-flower_purpleA.glb",
+   "position": [
+    4.3,
+    0.0,
+    1.3
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-flower_redA.glb",
+   "position": [
+    -4.4,
+    0.0,
+    1.7
+   ],
+   "rotationY": 90,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-flower_yellowA.glb",
+   "position": [
+    -0.4,
+    0.0,
+    -3.0
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-flower_purpleA.glb",
+   "position": [
+    2.0,
+    0.0,
+    -3.3
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-flower_redA.glb",
+   "position": [
+    1.0,
+    0.0,
+    -2.4
+   ],
+   "rotationY": 45,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-flower_yellowA.glb",
+   "position": [
+    -2.4,
+    0.0,
+    -2.2
+   ],
+   "rotationY": 60,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-rock_largeA.glb",
+   "position": [
+    5.8,
+    0.0,
+    -2.2
+   ],
+   "rotationY": 25,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-stump_round.glb",
+   "position": [
+    -4.8,
+    0.0,
+    -0.2
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-mushroom_redGroup.glb",
+   "position": [
+    -3.6,
+    0.0,
+    0.7
+   ],
+   "rotationY": 0,
+   "scale": 2.6
+  },
+  {
+   "model": "models/nature-log.glb",
+   "position": [
+    4.9,
+    0.0,
+    3.0
+   ],
+   "rotationY": 70,
+   "scale": 2.6
+  }
+ ]
+}
