@@ -1,4 +1,4 @@
-# MoMask story experience — frontend
+# TinyStage — frontend
 
 A simple three-screen story maker:
 

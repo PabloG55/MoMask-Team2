@@ -319,7 +319,7 @@ async function init() {
       endLoading();
       if (capture) document.body.dataset.error = error.message;
       else { showStep('write'); status(error.message, true); }
-      console.error('[MoMask show]', error);
+      console.error('[TinyStage show]', error);
     }
   }
 }
