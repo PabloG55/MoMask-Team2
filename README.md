@@ -138,11 +138,11 @@ the three examples already made, so the page works with no server at all.
 
 **Deploying.** The Space needs `app.py`, `momask/`, `app/server/`, `app/story/` (with
 `app/story/characters/*.json`), `app/client/story/examples.json`, which the page reads, and
-`app/client/docs/assets/character/Xbot.glb`, which the Story tab shows. It does not need the
-VRMs, set models or saved shows; only the player uses those. If
-`app/client/story/` goes to the Space as well, first
-add `*.vrm`, `*.glb` and `*.mp3` to `.gitattributes` as LFS, because Hugging Face wants binary
-files in LFS/Xet. Free text needs the Space secret `OPENAI_API_KEY`.
+`app/client/docs/assets/character/Xbot.glb`, which the Story tab shows, and all of
+`app/client/story/`, which `app.py` serves as the TinyStage page at `/tinystage/`
+(https://pgarces-momask-team2.hf.space/tinystage/). Before uploading, add `*.vrm`, `*.glb` and
+`*.mp3` to the upload copy's `.gitattributes` as LFS, because Hugging Face wants binary files in
+LFS/Xet and the Space build otherwise checks out the pointer text instead of the file. Free text needs the Space secret `OPENAI_API_KEY`.
 
 Code: `app/story/director.py` (story → show, and the checks on it), `app/story/show.py` (voices,
 mouths, camera plan, puts it together), `app/story/collide.py` (keeps each character's arms out of
