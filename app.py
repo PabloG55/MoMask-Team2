@@ -22,9 +22,10 @@ api.start()
 demo = ui.build()
 
 # The TinyStage page, served by the same app so it calls the API on its own origin.
-# It goes through launch() so ZeroGPU still sees the Space start the usual way.
+# It goes through launch() so ZeroGPU still sees the Space start the usual way. SSR is off
+# because on Spaces it puts a Node server in front that answers /tinystage/ itself.
 PAGE = os.path.join(ROOT, "app", "client", "story")
 ROUTES = [Mount("/tinystage", app=StaticFiles(directory=PAGE, html=True))] if os.path.isdir(PAGE) else []
 
 if __name__ == "__main__":
-    demo.launch(app_kwargs={"routes": ROUTES})
+    demo.launch(ssr_mode=False, app_kwargs={"routes": ROUTES})
