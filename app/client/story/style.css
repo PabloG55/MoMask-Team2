@@ -159,3 +159,5 @@ body.capture .top, body.capture .panel, body.capture .transport, body.capture .e
 body.capture .layout { display: block; padding: 0; max-width: none; }
 body.capture .subtitles p { animation: none; backdrop-filter: none; }
 body.capture .screen { position: fixed; inset: 0; aspect-ratio: auto; border-radius: 0; box-shadow: none; }
+
+.live-hint { margin: 10px 0 0; font-size: 12.5px; color: var(--muted); }
