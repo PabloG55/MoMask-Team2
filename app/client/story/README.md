@@ -1,70 +1,51 @@
-# MoMask Team 2 — Show Client
+# MoMask story experience — frontend
 
-The show client is a static browser app that turns a short story or structured show JSON into a narrated 3D scene. It uses Three.js and `three-vrm` to render characters, sets, motion, camera cuts, subtitles, and synced audio. The browser renders the show locally; the server does **not** stream a video.
+A simple three-screen story maker:
 
-## Run the frontend
+1. **Write a story.** The visitor types a normal-language story or taps one of three sentence ideas to fill the textbox. Click **Make my show**. No API settings or JSON appear in the UI.
+2. **Wait behind the curtain.** A full-screen animated theatre curtain cycles through friendly messages and shows elapsed time (not a promise/countdown). Live generation commonly takes 30+ seconds, especially when the Hugging Face Space has been asleep.
+3. **Watch the show.** A large 3D stage plays characters, camera shots, captions and voices; play/pause, seeking, **Watch it again**, and **Make another story** are available.
 
-From the **repository root**:
+This renders 3D locally in the viewer using Three.js and three-vrm. It does **not** play or download a streamed video. The existing `player.js`, `characters/`, `sets/`, `demo/` and `examples.json` remain unchanged.
+
+## Start locally
+
+From the `MoMask-Team2` repository root:
 
 ```bash
 python3 -m http.server 8831 --directory app/client/story
 ```
 
-Then open <http://127.0.0.1:8831/>.
+Type this exact URL in your browser: <http://localhost:8831/index.html>. The frontend needs internet access for CDN JavaScript dependencies, even when playing a local saved show from a newly loaded page.
 
-No frontend build step or Python model installation is required. An internet connection is needed for CDN JavaScript dependencies and for live generation via the Hugging Face Space. Saved shows can be played without calling the Space, although the browser still needs to load the JavaScript dependencies.
+## Space API
 
-## Try the saved demo first
-
-1. Select one of the examples in the **Story** dropdown.
-2. Click **Play saved show**. The player loads `demo/<example-slug>/timeline.json`, the character motion `.glb` files, and `voices.mp3` from the local folder.
-3. Test play/pause, the seek bar, subtitles, and the free camera.
-
-The three example show definitions are also in `examples.json`. These structured JSON stories bypass LLM planning when sent to the live API.
-
-## Generate a live show
-
-1. Open the [Space](https://huggingface.co/spaces/pgarces/MoMask-Team2) first to wake it up.
-2. In the client, leave **Space** set to `pgarces/MoMask-Team2` and **Seed** set to `42`.
-3. Choose an example JSON story, or select **Write my own…** and type a short natural-language story.
-4. Click **Make it live**. A loading overlay stays visible while generation runs; it can take around 30 seconds or longer when the Space is cold.
-5. The browser loads the returned animations and voice track, then plays the show.
-
-For a locally running Gradio backend, start the frontend with `?space=http://127.0.0.1:7860`, e.g. <http://127.0.0.1:8831/?space=http://127.0.0.1:7860>.
-
-## API contract
-
-`main.js` imports `@gradio/client` dynamically, connects to the Space, and calls:
+In `main.js` the frontend uses the existing backend:
 
 ```js
-const app = await Client.connect("pgarces/MoMask-Team2");
-const result = await app.predict("/show", { story, seed: 42 });
+const { Client } = await import('https://cdn.jsdelivr.net/npm/@gradio/client@2.7.2/dist/index.min.js');
+const app = await Client.connect('pgarces/MoMask-Team2');
+const result = await app.predict('/show', { story, seed: 42 });
 const [motions, voices, timeline] = result.data;
 ```
 
-- `motions`: one animation-only `.glb` file per character, loaded onto its matching local VRM character.
-- `voices`: a single mixed narration/dialogue `.mp3` file.
-- `timeline`: show duration, cast, steps, camera shots, captions, mouth movements, and network/statistics data.
+The frontend maps each returned character `.glb` motion to its `.vrm` character in `characters/`; `voices` is the mixed `.mp3` audio track; `timeline` drives camera cuts, captions, and animation. `player.js` handles 3D rendering. The API is described in `app/docs/SHOW-API.md`.
 
-The frontend maps character names to motion-file URLs, loads the assets with `ShowPlayer` from `player.js`, and synchronizes the animation, camera, captions, and audio on the browser playback clock. The page displays round-trip timing and network size information after generation.
+The server needs its OpenAI key for free-text planning. The client doesn't need API keys. Open the [Hugging Face Space](https://huggingface.co/spaces/pgarces/MoMask-Team2) before class to wake it up. The optional query parameter `?space=<id-or-url>` can target a different development backend without adding a visible Space field.
 
-Full API definition: [`app/docs/SHOW-API.md`](../../docs/SHOW-API.md). The older one-character Xbot mode is at `/story` and documented in [`app/docs/STORY-API.md`](../../docs/STORY-API.md).
+## Fallback and recording
 
-## Failure modes and demo backup
+The three example sentence buttons map internally to the three existing entries in `examples.json` and saved output folders in `demo/`. For a selected example, if live free-text generation fails, the client first tries its structured show definition via `/show` (this bypasses OpenAI), then automatically uses the locally saved output if the Space still cannot make it. A note identifies when the result is a structured or prerecorded example rather than the requested free-text show. Custom stories are **not** silently replaced with unrelated examples; a helpful error appears instead.
 
-- **Space slow / cold start:** open it before the presentation, then allow extra time for the first generation.
-- **Free-text planning fails:** select a JSON example from `examples.json` and use **Make it live**; structured JSON skips the OpenAI director.
-- **Space or Wi-Fi unavailable:** use **Play saved show** with files in `demo/` to show a pre-generated result. Note that the page uses CDN JavaScript imports; if completely offline, use a previously recorded demo video rather than relying on a fresh browser load.
-- **Missing models / blank canvas:** check the browser developer console and confirm `characters/`, `sets/`, and `demo/` were pulled from `main`.
-- **Unexpected 404:** serve from the repository root with the command above, then visit the root URL `/`, **not** `/docs/`.
+**Fast demo mode:** open <http://localhost:8831/index.html?demo=1>, tap one of the three example sentences, then press **Make my show**. This goes straight to the matching prerecorded show without calling the Space, while preserving the same three-screen experience. It still relies on the frontend's CDN dependencies, so keep a screen-recording backup if Wi-Fi might fail.
 
-Before class, record a short screen-capture video that shows a selected example, the rendered 3D animation, captions, and audio. Keep a copy locally. Also test one live show with JSON before relying on free-text planning.
+For frame capture, the former `?capture=1&show=demo/dino-s-big-jump` interface is still supported and exposes `window.renderAt(t)` and `window.duration()`.
 
-## Main frontend files
+Before Thursday: verify the live story generation path, the demo path, replay/pause/subtitles, and the audio in your backup recording. A Mac screen recording does not always include system audio by default: verify sound before class or use a capture tool configured for audio.
 
-- `index.html` — layout, story input, play controls, loading message.
-- `main.js` — Gradio API connection, UI events, demo loading, playback/audio timing.
-- `player.js` — Three.js and VRM rendering, motion, camera, and expressions.
-- `style.css` — visual styling.
-- `examples.json` — prewritten JSON story definitions.
-- `characters/`, `sets/`, `demo/` — static 3D assets and saved example outputs.
+## Files changed for this UI
+
+- `index.html`: three-step markup, three example sentence buttons, animated curtain, large player.
+- `style.css`: responsive, playful styles and CSS loading animation.
+- `main.js`: frontend state and API/fallback orchestration, playback controls.
+- `README.md`: this guide.

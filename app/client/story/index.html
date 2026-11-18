@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>MoMask Show</title>
-  <meta name="description" content="Pocoyo-style shows: a story becomes characters that move, talk and take turns. ITCS 6166 Team 2.">
+  <meta name="theme-color" content="#f9f6ff">
+  <title>MoMask — Make a little magic</title>
+  <meta name="description" content="Write a story and watch it become an animated 3D show.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script type="importmap">
     {
@@ -20,69 +21,92 @@
   </script>
 </head>
 <body>
-  <header class="top">
-    <div class="brand">
-      <span class="logo" aria-hidden="true"></span>
-      <div>
-        <h1>MoMask Show</h1>
-        <p>A story in, a show out: MoMask moves the characters, the receiver draws them.</p>
-      </div>
-    </div>
-    <a class="team" href="https://huggingface.co/spaces/pgarces/MoMask-Team2" target="_blank" rel="noopener">ITCS 6166 · Team 2</a>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="MoMask home">
+      <span class="brand-mark" aria-hidden="true">✦</span>
+      <span>MoMask<span class="brand-dot">.</span></span>
+    </a>
+    <span class="header-tag">A little story. A big show. <span aria-hidden="true">✦</span></span>
   </header>
 
-  <main class="layout">
-    <section class="stage" aria-label="Show">
-      <div class="screen" id="screen">
-        <canvas id="view"></canvas>
-        <div class="titlecard" id="titlecard"><span id="title-text"></span></div>
-        <div class="subtitles" id="subtitles" aria-live="polite"></div>
-        <div class="empty" id="empty">
-          <p>Pick a story and press <b>Play</b>.</p>
+  <main>
+    <!-- STEP 1: Nothing technical is exposed to the storyteller. -->
+    <section id="write-step" class="write-step" aria-labelledby="write-title">
+      <div class="intro">
+        <div class="eyebrow"><span aria-hidden="true">✧</span> YOUR IMAGINATION, ON STAGE <span aria-hidden="true">✧</span></div>
+        <h1 id="write-title">Every great show starts<br>with <em>your</em> story.</h1>
+        <p>Dream up a little adventure. We'll bring the characters, movement, and voices to life.</p>
+      </div>
+
+      <div class="story-card">
+        <label for="story" class="story-label">What should your story be about?</label>
+        <textarea id="story" rows="5" maxlength="3000" placeholder="Once upon a time, a little dinosaur..." aria-describedby="story-help"></textarea>
+        <div class="story-footer">
+          <span id="story-help">A couple of sentences is perfect.</span>
+          <span class="char-count" id="char-count">0 / 3000</span>
         </div>
-        <div class="busy" id="busy" hidden><span class="spinner"></span><span id="busy-text">Making the show…</span></div>
+        <button id="make" class="button button-primary" type="button"><span aria-hidden="true">✦</span> Make my show <span aria-hidden="true">→</span></button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
       </div>
-      <div class="transport">
-        <button id="play" class="round" aria-label="Play" disabled>
-          <svg viewBox="0 0 24 24" class="i-play"><path d="M8 5.5v13l11-6.5z"/></svg>
-          <svg viewBox="0 0 24 24" class="i-pause"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
-        </button>
-        <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Time" disabled>
-        <span id="clock" class="clock">0:00 / 0:00</span>
-        <label class="toggle"><input type="checkbox" id="free"> Free camera</label>
+
+      <div class="ideas">
+        <p class="ideas-title"><span aria-hidden="true">✨</span> Need a little inspiration? Try an idea!</p>
+        <div class="idea-grid" id="idea-grid">
+          <button class="idea-card" type="button" data-idea="0"><span class="idea-icon" aria-hidden="true">🦕</span><span class="idea-text">A dino kid tries a big jump while his teddy bear cheers him on.</span><span class="idea-arrow" aria-hidden="true">↗</span></button>
+          <button class="idea-card" type="button" data-idea="1"><span class="idea-icon" aria-hidden="true">🚀</span><span class="idea-text">An astronaut meets a robot and a friendly alien on the moon.</span><span class="idea-arrow" aria-hidden="true">↗</span></button>
+          <button class="idea-card" type="button" data-idea="2"><span class="idea-icon" aria-hidden="true">🐸</span><span class="idea-text">A happy frog and a friend have a dance party in the park, speaking Spanish.</span><span class="idea-arrow" aria-hidden="true">↗</span></button>
+        </div>
       </div>
+      <p class="footer-note">Made with a little imagination and a lot of motion. <span aria-hidden="true">✦</span></p>
     </section>
 
-    <aside class="panel">
-      <div class="card">
-        <label for="example" class="label">Story</label>
-        <select id="example"></select>
-        <textarea id="story" rows="9" spellcheck="false"
-          placeholder="Write a story (needs the Space's OpenAI key) or paste a show as JSON."></textarea>
-        <div class="row">
-          <button id="saved" class="secondary">Play saved show</button>
-          <button id="make" class="primary">Make it live</button>
+    <!-- STEP 3: The browser renders the returned 3D timeline; this is not a video stream. -->
+    <section id="watch-step" class="watch-step" aria-labelledby="watch-title" hidden>
+      <div class="watch-heading">
+        <div class="eyebrow"><span aria-hidden="true">✦</span> THE STAGE IS YOURS</div>
+        <h1 id="watch-title">It's showtime!</h1>
+        <p id="show-title" class="show-title"></p>
+      </div>
+      <div class="player-wrap">
+        <div class="screen" id="screen">
+          <canvas id="view" aria-label="Animated 3D story stage"></canvas>
+          <div class="titlecard" id="titlecard"><span id="title-text"></span></div>
+          <div class="subtitles" id="subtitles" aria-live="off"></div>
         </div>
-        <div class="row small">
-          <label>Seed <input id="seed" type="number" value="42"></label>
-          <label class="grow">Space <input id="space" type="text" value="pgarces/MoMask-Team2"></label>
+        <div class="transport" aria-label="Show playback controls">
+          <button id="play" class="round" type="button" aria-label="Pause" disabled>
+            <svg viewBox="0 0 24 24" class="i-play" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+            <svg viewBox="0 0 24 24" class="i-pause" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+          </button>
+          <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Seek in show" disabled>
+          <span id="clock" class="clock">0:00 / 0:00</span>
         </div>
-        <p class="live-hint">Live shows may take 30 seconds or longer. Saved shows play without contacting the Space.</p>
-        <p id="status" class="status" role="status"></p>
       </div>
-
-      <div class="card" id="netcard" hidden>
-        <h2>What crossed the network</h2>
-        <div id="net"></div>
-        <p class="note" id="net-note"></p>
+      <p id="watch-note" class="watch-note" role="status" aria-live="polite"></p>
+      <div class="watch-actions">
+        <button id="another" class="button button-secondary" type="button">← Make another story</button>
+        <button id="again" class="button button-primary" type="button">↻ Watch it again</button>
       </div>
-
-      <div class="card" id="castcard" hidden>
-        <h2>Cast and camera</h2>
-        <div id="castlist"></div>
-      </div>
-    </aside>
+    </section>
   </main>
+
+  <!-- STEP 2: Full-window theatre curtain while the Space generates the show. -->
+  <section id="loading-step" class="loading-step" aria-labelledby="loading-title" hidden>
+    <div class="stage-lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="curtain curtain-left" aria-hidden="true"></div>
+    <div class="curtain curtain-right" aria-hidden="true"></div>
+    <div class="curtain-valance" aria-hidden="true"></div>
+    <div class="loading-center">
+      <div class="loading-star" aria-hidden="true">✦</div>
+      <p class="loading-kicker">BEHIND THE CURTAIN...</p>
+      <h2 id="loading-title">Your magic is in the making!</h2>
+      <p class="loading-line" id="loading-line" aria-live="polite">Writing the script…</p>
+      <div class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <p class="elapsed" id="elapsed">0 seconds elapsed</p>
+      <p class="loading-note">Great stories take a moment. This can take 30 seconds or longer, especially the first time.</p>
+    </div>
+    <div class="stage-floor" aria-hidden="true"></div>
+  </section>
 
   <audio id="voices" preload="auto"></audio>
   <script type="module" src="main.js"></script>
