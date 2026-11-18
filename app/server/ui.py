@@ -26,6 +26,7 @@ def build():
 
     with gr.Blocks(title="MoMask Team 2") as demo:
         gr.Markdown("# MoMask: text → 3D motion (ITCS 6166, Team 2)")
+        gr.Markdown("**TinyStage**, the app built on this API: https://pgarces-momask-team2.hf.space/tinystage/")
 
         with gr.Tab("Story"):
             gr.Markdown(
