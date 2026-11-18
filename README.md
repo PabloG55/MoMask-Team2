@@ -137,8 +137,9 @@ the three examples already made, so the page works with no server at all.
 - Sets: models from Kenney's Nature, Furniture, Pirate and Space kits (https://kenney.nl), built by `app/tools/build_sets.py`. Credits per model are in `app/client/story/sets/CREDITS.md`.
 
 **Deploying.** The Space needs `app.py`, `momask/`, `app/server/`, `app/story/` (with
-`app/story/characters/*.json`) and `app/client/story/examples.json`, which the page reads. It
-does not need the VRMs, set models or saved shows; only the player uses those. If
+`app/story/characters/*.json`), `app/client/story/examples.json`, which the page reads, and
+`app/client/docs/assets/character/Xbot.glb`, which the Story tab shows. It does not need the
+VRMs, set models or saved shows; only the player uses those. If
 `app/client/story/` goes to the Space as well, first
 add `*.vrm`, `*.glb` and `*.mp3` to `.gitattributes` as LFS, because Hugging Face wants binary
 files in LFS/Xet. Free text needs the Space secret `OPENAI_API_KEY`.
