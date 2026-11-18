@@ -207,6 +207,9 @@ def build(kits_dir):
                 source = os.path.join(kits_dir, kit, sub, prop["model"] + ".glb")
             name = f"{prop['kit']}-{prop['model']}.glb"
             shutil.copyfile(source, os.path.join(folder, "models", name))
+            textures = os.path.join(os.path.dirname(source), "Textures")
+            if os.path.isdir(textures):  # the Pirate Kit's GLBs read Textures/colormap.png
+                shutil.copytree(textures, os.path.join(folder, "models", "Textures"), dirs_exist_ok=True)
             used.setdefault(prop["kit"], set()).add(prop["model"])
             props.append(
                 {
