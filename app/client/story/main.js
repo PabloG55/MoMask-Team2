@@ -25,9 +25,20 @@ function status(text, error = false) {
   $('status').classList.toggle('error', error);
 }
 
+// Live requests can take 30+ seconds, especially after the Space wakes up.
+// Show elapsed time rather than a countdown we cannot promise.
+let busyMessage = '';
+let requestStarted = null;
+function drawBusy() {
+  if (!busyMessage) return;
+  const elapsed = requestStarted == null ? '' :
+    ` · ${Math.floor((performance.now() - requestStarted) / 1000)}s elapsed`;
+  $('busy-text').textContent = `${busyMessage}${elapsed}`;
+}
 function busy(text) {
+  busyMessage = text;
   $('busy').hidden = !text;
-  if (text) $('busy-text').textContent = text;
+  drawBusy();
 }
 
 
@@ -78,7 +89,7 @@ function overlay(t) {
   const lines = player.linesAt(t);
   const html = lines.map((l) => {
     const name = l.who === 'narrator' ? '' :
-      `<span class="who" style="--c:${COLORS[l.who] || '#555'}">${l.who}</span>`;
+      `<span class="who" style="--c:${COLORS[l.who] || '#555'}">${escape(l.who)}</span>`;
     return `<p class="${l.who === 'narrator' ? 'narrator' : 'character'}">${name}${escape(l.text)}</p>`;
   }).join('');
   if ($('subtitles').innerHTML !== html) $('subtitles').innerHTML = html;
@@ -172,9 +183,10 @@ function describe(t) {
   $('net-note').textContent = `${(video / Math.max(sent, 1)).toFixed(0)}× less than the video. ${parts.join(', ')}.`;
   $('netcard').hidden = false;
 
-  const steps = t.steps.map((s, i) =>
-    `<li><span class="who" style="--c:${COLORS[s.actor] || '#555'}">${s.actor}</span>${escape(s.action.replace(/^a person /, ''))}<em>${s.shot}</em></li>`);
-  $('castlist').innerHTML = `<p class="where">${t.set} · ${t.light} light · ${t.cast.map((c) => c.name).join(', ')}</p><ol>${steps.join('')}</ol>`;
+  const steps = t.steps.map((s) =>
+    `<li><span class="who" style="--c:${COLORS[s.actor] || '#555'}">${escape(s.actor)}</span>${escape(s.action.replace(/^a person /, ''))}<em>${escape(s.shot)}</em></li>`);
+  const cast = t.cast.map((c) => escape(c.name)).join(', ');
+  $('castlist').innerHTML = `<p class="where">${escape(t.set)} · ${escape(t.light)} light · ${cast}</p><ol>${steps.join('')}</ol>`;
   $('castcard').hidden = false;
 }
 
@@ -193,19 +205,48 @@ async function init() {
   $('example').addEventListener('change', fill);
   fill();
 
+  // Avoid concurrent asset loads: an in-flight live show and a saved one
+  // should never both mutate the same player and scene.
+  function lockLoading(locked) {
+    $('make').disabled = locked;
+    $('saved').disabled = locked || !current();
+    $('example').disabled = locked;
+  }
   $('saved').addEventListener('click', async () => {
     const e = current();
     if (!e) return;
-    try { status(''); await fromFolder(`demo/${e.slug || slug(e.name)}`); play(0); status('Saved show: made earlier by the same pipeline.'); }
-    catch (error) { busy(''); status(error.message, true); }
+    lockLoading(true);
+    try {
+      status('');
+      await fromFolder(`demo/${e.slug || slug(e.name)}`);
+      play(0);
+      status('Saved show ready. This does not call the Space.');
+    } catch (error) {
+      status(error?.message || String(error), true);
+    } finally {
+      busy('');
+      lockLoading(false);
+    }
   });
   $('make').addEventListener('click', async () => {
     const story = $('story').value.trim();
     if (!story) { status('Write a story first.', true); return; }
-    $('make').disabled = true;
-    try { status(''); await live(story, $('seed').value); play(0); status('Made live by the Space.'); }
-    catch (error) { busy(''); status(error?.message || String(error), true); }
-    finally { $('make').disabled = false; }
+    lockLoading(true);
+    requestStarted = performance.now();
+    const ticker = setInterval(drawBusy, 1000);
+    try {
+      status('');
+      await live(story, $('seed').value);
+      play(0);
+      status('Made live by the Space.');
+    } catch (error) {
+      status(`${error?.message || String(error)} — You can still play a saved show.`, true);
+    } finally {
+      clearInterval(ticker);
+      requestStarted = null;
+      busy('');
+      lockLoading(false);
+    }
   });
   $('play').addEventListener('click', () => (playing ? pause() : play()));
   $('scrub').addEventListener('input', () => timeline && seek((($('scrub').value) / 1000) * timeline.duration));
