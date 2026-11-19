@@ -26,6 +26,7 @@ def build():
 
     with gr.Blocks(title="MoMask Team 2") as demo:
         gr.Markdown("# MoMask: text → 3D motion (ITCS 6166, Team 2)")
+        gr.Markdown("**TinyStage**, the app built on this API: https://pgarces-momask-team2.hf.space/tinystage/")
 
         with gr.Tab("Story"):
             gr.Markdown(
@@ -121,5 +122,10 @@ def build():
                 outputs=[bvh_output, video_output, stats_output],
                 api_name="generate",
             )
+
+        # Everything runs on the CPU, but ZeroGPU only starts a Space with a
+        # @spaces.GPU function wired to an event. Hidden, never clicked.
+        gpu_button = gr.Button(visible=False)
+        gpu_button.click(api.gpu_stub, api_visibility="private")
 
     return demo

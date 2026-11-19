@@ -373,6 +373,13 @@ export class ShowPlayer {
   }
 
   linesAt(t) {
-    return (this.timeline?.lines || []).filter((l) => t >= l.start - 0.05 && t < l.end + 0.35);
+    // A caption stays a moment after its line, but goes when the next line starts, so two
+    // only share the screen when two voices really overlap.
+    const lines = this.timeline?.lines || [];
+    return lines.filter((l, i) => {
+      const next = lines[i + 1];
+      const until = Math.max(l.end, Math.min(l.end + 0.35, next ? next.start - 0.05 : Infinity));
+      return t >= l.start - 0.05 && t < until;
+    });
   }
 }

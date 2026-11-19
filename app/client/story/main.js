@@ -16,7 +16,8 @@ const audio = $('voices');
 let timeline = null;
 let examples = [];
 let playing = false;
-let clockStart = 0, clockOffset = 0, lastSync = 0;
+let clockStart = 0, clockOffset = 0;
+const SOUND_NOTE = ' Tap Play to begin with sound.';
 let loadingTimer = null;
 let loadingStarted = 0;
 let loadingMessage = 0;
@@ -92,16 +93,16 @@ function setLoadingMessage(message) {
   }, 1000);
 }
 
-// The 3D show runs on a page clock; the audio follows without stopping the picture.
+// The 3D show runs on a page clock that follows the voices. The audio is never moved
+// while it plays: on iPhones every change of currentTime mutes it for about half a second.
 function now() { return playing ? clockOffset + (performance.now() - clockStart) / 1000 : clockOffset; }
 
-function keepVoicesInStep(t) {
-  if (audio.paused || audio.ended || audio.readyState < 3 || t >= (audio.duration || Infinity)) return;
-  const at = performance.now();
-  if (Math.abs(audio.currentTime - t) > 0.25 && at - lastSync > 1000) {
-    audio.currentTime = t;
-    lastSync = at;
-  }
+function keepPictureWithVoices() {
+  if (audio.paused || audio.ended || audio.seeking || audio.readyState < 3) return;
+  if (audio.currentTime >= (audio.duration || Infinity) - 0.05) return;
+  const drift = audio.currentTime - now();
+  if (Math.abs(drift) > 0.3) clockOffset += drift;
+  else if (Math.abs(drift) > 0.03) clockOffset += drift * 0.05;
 }
 
 function play(from = now()) {
@@ -109,15 +110,16 @@ function play(from = now()) {
   if (from >= timeline.duration - 0.05) from = 0;
   clockOffset = from;
   clockStart = performance.now();
-  lastSync = performance.now();
   playing = true;
   audio.currentTime = Math.min(from, audio.duration || from);
-  audio.play().catch(() => {
+  audio.play().then(() => {
+    $('watch-note').textContent = $('watch-note').textContent.replace(SOUND_NOTE, '');
+  }).catch(() => {
     // After a long generation some browsers require a fresh click for sound.
     // Pause the picture rather than silently presenting a voiceless show.
     if (!playing) return;
     pause();
-    $('watch-note').textContent += ' Tap Play to begin with sound.';
+    if (!$('watch-note').textContent.includes(SOUND_NOTE)) $('watch-note').textContent += SOUND_NOTE;
   });
   document.body.classList.add('playing');
   $('play').setAttribute('aria-label', 'Pause');
@@ -152,9 +154,9 @@ function overlay(t) {
 function loop() {
   requestAnimationFrame(loop);
   if (!timeline || capture || $('watch-step').hidden || !$('loading-step').hidden) return;
+  if (playing) keepPictureWithVoices();
   let t = now();
   if (playing && t >= timeline.duration) { pause(); clockOffset = t = timeline.duration; }
-  if (playing) keepVoicesInStep(t);
   player.renderAt(t);
   overlay(t);
   $('scrub').value = Math.round((t / timeline.duration) * 1000);
@@ -319,7 +321,7 @@ async function init() {
       endLoading();
       if (capture) document.body.dataset.error = error.message;
       else { showStep('write'); status(error.message, true); }
-      console.error('[MoMask show]', error);
+      console.error('[TinyStage show]', error);
     }
   }
 }

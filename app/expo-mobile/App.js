@@ -16,9 +16,9 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-// Run the existing story website on your Mac and set this to its LAN URL in .env.
-// It must be reachable from your PHONE, so localhost is not usable here.
-const STORY_URL = process.env.EXPO_PUBLIC_STORY_URL || '';
+// The show player is the TinyStage page on our Space. EXPO_PUBLIC_STORY_URL can point
+// it at a local copy for development (use the Mac's LAN address, not localhost).
+const STORY_URL = process.env.EXPO_PUBLIC_STORY_URL || 'https://pgarces-momask-team2.hf.space/tinystage/';
 const EXAMPLES = [
   { icon: '🦕', text: 'A dino kid tries a big jump while his teddy bear cheers him on.' },
   { icon: '🚀', text: 'An astronaut meets a robot and a friendly alien on the moon.' },
@@ -204,7 +204,7 @@ export default function App() {
   };
 
   const playerURL = STORY_URL
-    ? `${STORY_URL.replace(/\/?$/, '')}${STORY_URL.includes('?') ? '&' : '?'}${demoMode ? 'demo=1&' : ''}expo=1`
+    ? `${STORY_URL}${STORY_URL.includes('?') ? '&' : '?'}${demoMode ? 'demo=1&' : ''}expo=1`
     : '';
 
   return (
@@ -214,7 +214,7 @@ export default function App() {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView contentContainerStyle={styles.writeContent} keyboardShouldPersistTaps="handled">
             <View style={styles.brandRow}>
-              <Text style={styles.brand}>✦ MoMask<Text style={styles.brandDot}>.</Text></Text>
+              <Text style={styles.brand}>✦ TinyStage<Text style={styles.brandDot}>.</Text></Text>
               <Text style={styles.brandTag}>A little story. A big show.</Text>
             </View>
             <Text style={styles.eyebrow}>✧ YOUR IMAGINATION, ON STAGE ✧</Text>
