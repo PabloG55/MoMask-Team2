@@ -214,7 +214,7 @@ export default function App() {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView contentContainerStyle={styles.writeContent} keyboardShouldPersistTaps="handled">
             <View style={styles.brandRow}>
-              <Text style={styles.brand}>✦ MoMask<Text style={styles.brandDot}>.</Text></Text>
+              <Text style={styles.brand}>✦ TinyStage<Text style={styles.brandDot}>.</Text></Text>
               <Text style={styles.brandTag}>A little story. A big show.</Text>
             </View>
             <Text style={styles.eyebrow}>✧ YOUR IMAGINATION, ON STAGE ✧</Text>
