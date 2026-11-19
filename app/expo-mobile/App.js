@@ -204,7 +204,7 @@ export default function App() {
   };
 
   const playerURL = STORY_URL
-    ? `${STORY_URL.replace(/\/?$/, '')}${STORY_URL.includes('?') ? '&' : '?'}${demoMode ? 'demo=1&' : ''}expo=1`
+    ? `${STORY_URL}${STORY_URL.includes('?') ? '&' : '?'}${demoMode ? 'demo=1&' : ''}expo=1`
     : '';
 
   return (
