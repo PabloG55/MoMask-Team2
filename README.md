@@ -148,7 +148,7 @@ Code: `app/story/director.py` (story → show, and the checks on it), `app/story
 mouths, camera plan, puts it together), `app/story/collide.py` (keeps each character's arms out of
 its own head and body), `app/client/story/player.js` (the 3D show) and `app/client/story/main.js` (the
 page). `app/tests/test_show.py` covers the director's cleaning, the camera plan, the voices and the
-sets, and `app/tests/test_beats_collide.py` the timing, the arms and the head nods, all without
+sets, and `app/tests/test_beats_collide.py` the timing, the arms, the head nods and the head repair, all without
 needing MoMask.
 
 ## What we changed from upstream

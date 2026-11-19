@@ -273,3 +273,32 @@ def test_soften_nods_halves_a_nod_and_keeps_a_turn():
     assert np.allclose(out[1, 2], q[1, 2])
     assert degrees(out[2, 2]) < 40
     assert np.allclose(np.linalg.norm(out, axis=-1), 1)
+
+
+def test_a_head_that_sinks_into_the_neck_is_rebuilt_without_flipping():
+    from story.ik import CHEST, HEAD, NECK, SHOULDERS, repair_head
+
+    frames = 20
+    joints = np.zeros((frames, 22, 3))
+    joints[:, CHEST] = [0, 1.3, 0]
+    joints[:, NECK] = [0, 1.5, 0]
+    joints[:, SHOULDERS[0]] = [-0.18, 1.45, 0]
+    joints[:, SHOULDERS[1]] = [0.18, 1.45, 0]
+    tilt = np.radians(np.linspace(-60, 60, frames))  # head back, then forward
+    way = np.stack([np.zeros(frames), np.cos(tilt), np.sin(tilt)], axis=-1)
+    joints[:, HEAD] = joints[:, NECK] + 0.1 * way
+    lost = slice(8, 12)
+    joints[lost, HEAD] = joints[lost, NECK] - 0.01 * way[lost]  # sunk in, pointing down
+    out = repair_head(joints)
+
+    gap = np.linalg.norm(out[:, HEAD] - out[:, NECK], axis=-1)
+    assert np.allclose(gap, 0.1)
+    ways = (out[:, HEAD] - out[:, NECK]) / gap[:, None]
+    turns = np.degrees(np.arccos(np.clip((ways[1:] * ways[:-1]).sum(-1), -1, 1)))
+    assert turns.max() < 10  # 120 degrees over 19 frames, no flip
+    keep = np.ones(frames, bool)
+    keep[lost] = False
+    assert np.array_equal(out[keep], joints[keep])
+    whole = joints.copy()
+    whole[lost, HEAD] = whole[lost, NECK] + 0.1 * way[lost]
+    assert repair_head(whole) is whole  # nothing lost, nothing touched
