@@ -226,3 +226,95 @@ body.capture .subtitles p { backdrop-filter: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* On a laptop or desktop each step fits the window, so nothing scrolls. Sizes follow the window height. */
+@media (min-width: 751px) {
+  .site-header { padding: clamp(8px, 2.2vh, 26px) 30px; }
+  .write-step { padding: clamp(4px, 1.6vh, 30px) 26px clamp(8px, 1.8vh, 30px); }
+  .intro h1 { font-size: clamp(30px, min(5.8vw, 6.2vh), 65px); margin: clamp(4px, 1.2vh, 15px) 0 clamp(4px, 1vh, 11px); }
+  .intro p { margin-bottom: clamp(8px, 2.2vh, 27px); }
+  .story-card { padding: clamp(12px, 2.4vh, 26px) 27px clamp(12px, 2.2vh, 23px); }
+  .story-label { margin-bottom: clamp(6px, 1.2vh, 12px); }
+  #story { height: clamp(70px, 12vh, 146px); min-height: 0; padding: clamp(8px, 1.5vh, 15px) 18px; resize: none; }
+  .story-footer { padding-bottom: clamp(8px, 1.5vh, 17px); }
+  #make { padding: clamp(10px, 1.6vh, 15px) 23px; }
+  .ideas { margin-top: clamp(10px, 2.2vh, 28px); }
+  .ideas-title { margin-bottom: clamp(6px, 1.2vh, 13px); }
+  .idea-card { min-height: clamp(62px, 9vh, 100px); padding: clamp(8px, 1.4vh, 17px) 16px; }
+  .footer-note { margin-top: clamp(8px, 1.8vh, 35px); }
+
+  .watch-step { padding: clamp(0px, 1vh, 21px) 24px clamp(8px, 2vh, 30px); }
+  .watch-heading { margin-bottom: clamp(6px, 1.6vh, 20px); }
+  .watch-heading h1 { font-size: clamp(26px, min(4.5vw, 5.4vh), 51px); }
+  /* The stage is 16:9, so its width is what the height left over allows. */
+  .player-wrap { max-width: calc((100dvh - 400px) * 16 / 9 + 26px); min-width: 420px; margin: 0 auto; }
+  .transport { padding-top: clamp(8px, 1.4vh, 14px); }
+  .watch-note { margin-top: clamp(6px, 1.4vh, 15px); }
+  .watch-actions { margin-top: clamp(6px, 1.3vh, 13px); }
+  .watch-actions .button { padding: clamp(10px, 1.6vh, 15px) 23px; }
+}
+
+/* The curtain screen follows the window height too, so its text is never cut. */
+.curtain-valance { height: clamp(46px, 14vh, 115px); }
+.loading-center { padding: clamp(40px, 13vh, 100px) 24px clamp(14px, 6vh, 50px); }
+.loading-star { font-size: clamp(34px, 10vh, 78px); }
+.loading-kicker { margin-top: clamp(4px, 1.6vh, 14px); }
+.loading-center h2 { font-size: clamp(22px, min(6vw, 8vh), 65px); margin: clamp(4px, 1.2vh, 10px) auto clamp(6px, 2vh, 18px); }
+.loading-line { font-size: clamp(15px, min(3vw, 4.4vh), 24px); min-height: 0; margin: 0; }
+.loading-dots { margin: clamp(8px, 1.8vh, 14px) 0 clamp(8px, 2.6vh, 24px); }
+
+/* Phones: the same one-window rule, with the ideas as short rows. */
+@media (max-width: 750px) {
+  .site-header { padding: clamp(8px, 1.6svh, 18px) 17px; }
+  .write-step { padding: clamp(2px, 1svh, 15px) 17px clamp(8px, 1.6svh, 20px); }
+  .intro h1 br { display: none; }
+  .intro h1 { font-size: clamp(25px, min(8vw, 4.6svh), 44px); margin: clamp(4px, 1svh, 12px) 0 clamp(4px, .8svh, 10px); letter-spacing: -.9px; }
+  .intro p { font-size: 14px; margin-bottom: clamp(8px, 1.8svh, 20px); }
+  .story-card { padding: clamp(12px, 1.9svh, 18px); border-radius: 19px; }
+  .story-label { font-size: 18px; margin-bottom: clamp(6px, 1svh, 12px); }
+  #story { height: clamp(64px, 13svh, 150px); min-height: 0; padding: 10px 14px; font-size: 16px; line-height: 1.5; resize: none; }
+  .story-footer { padding-bottom: clamp(6px, 1.3svh, 14px); }
+  #make { padding: clamp(10px, 1.5svh, 15px) 18px; font-size: 19px; }
+  .ideas { margin-top: clamp(8px, 1.8svh, 22px); }
+  .ideas-title { font-size: 15px; margin-bottom: clamp(4px, 1svh, 10px); }
+  .idea-grid { gap: clamp(5px, 1svh, 10px); }
+  .idea-card { min-height: 0; padding: clamp(5px, .9svh, 10px) 12px; font-size: 12.5px; line-height: 1.3; border-radius: 14px; }
+  .idea-icon { width: 32px; height: 32px; font-size: 20px; border-radius: 10px; }
+  .idea-arrow { align-self: center; font-size: 16px; }
+  .footer-note { display: none; }
+  .watch-step { padding: clamp(2px, 1svh, 12px) 11px clamp(8px, 2svh, 30px); }
+  .watch-actions .button { min-width: 0; flex: 1 1 150px; padding: 13px 12px; }
+}
+@media (max-width: 750px) and (max-height: 720px) {
+  .intro p, .write-step .eyebrow { display: none; }
+}
+
+/* A phone on its side: very little height, so only the essentials stay. */
+@media (min-width: 560px) and (max-height: 520px) {
+  .write-step .eyebrow, .intro p, .ideas-title, .footer-note, .story-footer, .header-tag { display: none; }
+  .site-header { padding: 6px 20px; }
+  .brand { font-size: 22px; }
+  .brand-mark { width: 30px; height: 30px; font-size: 22px; border-radius: 10px; }
+  .write-step { padding: 0 20px 6px; }
+  .intro h1 br { display: none; }
+  .intro h1 { font-size: clamp(20px, 7vh, 30px); margin: 0 0 6px; }
+  .story-card { padding: 10px 14px; border-radius: 16px; }
+  .story-label { font-size: 15px; margin-bottom: 4px; }
+  #story { height: clamp(44px, 15vh, 70px); padding: 6px 12px; font-size: 16px; margin-bottom: 8px; }
+  #make { padding: 8px 18px; font-size: 17px; }
+  .ideas { margin-top: 8px; }
+  .idea-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .idea-card { min-height: 0; padding: 5px 8px; font-size: 11px; line-height: 1.25; border-radius: 12px; }
+  .idea-icon { width: 26px; height: 26px; font-size: 17px; }
+  .idea-arrow { display: none; }
+  .watch-step { padding: 0 16px 6px; }
+  .watch-heading { margin: 0 0 4px; }
+  .watch-heading .eyebrow, .watch-heading h1, .watch-note { display: none; }
+  .show-title { margin: 0; font-size: 14px; }
+  .player-wrap { max-width: calc((100dvh - 176px) * 16 / 9 + 14px); min-width: 0; margin: 0 auto; padding: 7px; border-radius: 16px; }
+  .transport { padding: 5px 4px 0; }
+  .round { width: 34px; height: 34px; }
+  .watch-actions { margin-top: 6px; flex-wrap: nowrap; }
+  .watch-actions .button { min-width: 0; flex: 0 1 220px; padding: 7px 14px; font-size: 14px; }
+  .loading-note { display: none; }
+}
