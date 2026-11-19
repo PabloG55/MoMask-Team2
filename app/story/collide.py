@@ -4,7 +4,8 @@ MoMask moves a person with human proportions, so on these cartoon bodies the han
 up inside the belly or the head. Each body part is a superquadric, measured from the
 character's mesh by tools/body_shapes.py, and each arm a chain of capsules. When an arm
 goes in, it turns at the shoulder by the smallest angle that clears every part, and at
-the elbow when that is not enough (a hand on a big helmet). The turns ease in and out
+the elbow when that is not enough (a hand on a big helmet). A big head counts at
+HEAD_SIZE of its size, so a hand may rest on it. The turns ease in and out
 over the frames around, and never push the arm deeper or make it jump (see _turn).
 """
 
@@ -32,6 +33,12 @@ PASSES = (
     + [("Arm", 0, 1.0)] * 4
 )
 SINK = 0.5  # share of a sleeve's thickness allowed into the trunk or a thigh
+# Share of the head's measured size the arms keep out of. Cartoon heads and hoods are two
+# or three times a person's, so at full size a hand raised beside the face (a wave) or
+# over the head (a jump) swings the whole arm out sideways, and still ends up in the hood
+# when the turn runs out. At this share the hand stays beside the face or on the hood, and
+# sinks no deeper than it did at full size.
+HEAD_SIZE = 0.7
 
 
 def level(u, across, along):
@@ -68,7 +75,7 @@ class Body:
                 skeleton.index[s["bone"]],
                 s["against"],
                 np.array(s["center"]),
-                np.array(s["radii"]),
+                np.array(s["radii"]) * (HEAD_SIZE if s["against"] == "arm" else 1.0),
                 s.get("across", 2.0),
                 s.get("along", 2.0),
             )
