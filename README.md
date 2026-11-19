@@ -20,7 +20,7 @@ ITCS 6166 (Computer Communication and Networks), Topic 2: Generative AI as a Ser
 
 **Try it online:** https://pgarces-momask-team2.hf.space/tinystage/
 
-Streaming a short cartoon costs megabytes; the story behind it is one sentence. TinyStage sends the story instead of the video. You type a short story, and the server plans a show, generates every character's motion with [MoMask](https://github.com/EricGuo5513/momask-codes), a text-to-3D-motion model, and every line with [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M), a text-to-speech model. It returns animation files, one audio track and a timeline, and the browser draws the 3D show itself with three.js. No video is sent: a show is about 20× smaller than the same show as a 720p video.
+Streaming a short cartoon costs megabytes; the story behind it is one sentence. TinyStage sends the story instead of the video. You type a short story, and the server plans a show, generates every character's motion with [MoMask](https://github.com/EricGuo5513/momask-codes), a text-to-3D-motion model, and every line with [Kokoro](https://huggingface.co/hexgrad/Kokoro-82M), a text-to-speech model. It returns animation files, one audio track and a timeline, and the browser draws the 3D show itself with three.js. No video is sent: for our three example shows, 342–656 KB reach the browser, against 6.0–9.9 MB for the same shows as 720p video (see [Reproduce our results](#reproduce-our-results)).
 
 This README is a guide to running the whole thing yourself: the MoMask model, the voices, the service and the TinyStage page.
 
@@ -95,9 +95,55 @@ On a Mac CPU this example takes about 15 s and returns 2 motion files, the voice
 python -m pytest app/tests -q
 ```
 
-They cover the server, story mode, show mode (the director's checks, the camera plan, the voices, the sets) and the timing, arms and head fixes, all without loading MoMask, so they need no model download and take a few seconds.
+You should see `53 passed`. They cover the server, story mode, show mode (the director's checks, the camera plan, the voices, the sets) and the timing, arms and head fixes, all without loading MoMask, so they need no model download and take a few seconds.
 
 **Saved shows.** `app/client/story/demo/` holds the three example shows already made, so the page can also play them with no server at all: run `python3 -m http.server 8831 --directory app/client/story` and open http://127.0.0.1:8831/index.html?demo=1, then pick one of the three ideas.
+
+## Reproduce our results
+
+### Milestone 2: the authors' MoMask, run as published
+
+[`notebooks/Team2_MoMask_Milestone2.ipynb`](notebooks/Team2_MoMask_Milestone2.ipynb) is the Google Colab notebook we used. It clones the authors' repository at commit `94a6636`, applies the three compatibility fixes listed under [What we changed from upstream](#what-we-changed-from-upstream) (NumPy `matrix_multiply`, `np.float`, Matplotlib), downloads the authors' pretrained checkpoints with their `prepare/download_models.sh`, and generates the two clips in our report: "A person walks forward." and "A person waving his hand.", each 100 frames, seed 42, 10 masked-generation iterations. No training is done.
+
+1. Open it in Colab: https://colab.research.google.com/github/PabloG55/MoMask-Team2/blob/main/notebooks/Team2_MoMask_Milestone2.ipynb
+2. **Runtime → Change runtime type → T4 GPU.**
+3. Run the cells in order, down to the version check (`git rev-parse HEAD`). Each clip appears as an MP4 under its cell; our own outputs are saved in the notebook, so you can compare them before running anything. The next cell zips the outputs for download.
+4. Skip the last two cells. They copied the same checkpoints to our Hugging Face repo [`pgarces/momask-checkpoints`](https://huggingface.co/pgarces/momask-checkpoints), which is where `app.py` downloads them from, and they need our write token.
+
+We ran it with Python 3.13.15, PyTorch 2.11.0 (CUDA 13.0) and NumPy 2.1.3 on a Tesla T4. The FID and R-precision numbers we quote are from the MoMask paper; we did not re-run the evaluation, which needs the HumanML3D dataset.
+
+### Milestone 3: TinyStage's time and size
+
+Every `/show` response carries its own measurements in `timeline["stats"]`: the server's seconds per stage (`plan`, `voices`, `motion`, `ik_retarget`, `audio`, `total`) and the bytes of each part (story text, motion `.glb` raw and gzipped, the same motion as BVH, the voices `.mp3`, the timeline). With `app.py` running (step 4 above), this runs the three example shows and compares what is sent with the same show as video:
+
+```python
+import json
+from gradio_client import Client
+
+client = Client("http://127.0.0.1:7860/")   # or "pgarces/MoMask-Team2" to measure the hosted Space
+with open("app/client/story/examples.json", encoding="utf-8") as f:
+    examples = json.load(f)
+
+for example in examples:
+    motions, voices, timeline = client.predict(json.dumps(example["show"]), 42, api_name="/show")
+    stats = timeline["stats"]
+    sizes = stats["bytes"]
+    sent = sizes["motion_glb"] + sizes["voices_mp3"] + sizes["timeline_json"]
+    video = timeline["duration"] * 2.5e6 / 8   # the same show as 720p video at 2.5 Mbit/s
+    print(example["show"]["title"], f'({timeline["duration"]:.1f} s show)')
+    print("  server seconds:", stats["seconds"])
+    print(f"  sent {sent / 1000:.0f} KB vs {video / 1e6:.1f} MB as 720p video ({video / sent:.0f}x less)")
+```
+
+On a MacBook (Apple silicon, CPU only) it printed:
+
+| Show | Length | Server time (voices / MoMask / IK + retarget) | Sent to the browser | Same show as 720p video |
+|---|---|---|---|---|
+| Dino's big jump | 31.6 s | 13.3 s (2.9 / 5.2 / 5.1) | 546 KB | 9.9 MB (18× more) |
+| A walk on the moon | 30.0 s | 16.9 s (2.3 / 7.7 / 6.8) | 656 KB | 9.4 MB (14× more) |
+| El baile de Froggy | 19.2 s | 6.9 s (1.6 / 3.4 / 1.9) | 342 KB | 6.0 MB (18× more) |
+
+The video size is an estimate (the show's length at 2.5 Mbit/s, a common 720p bitrate); Dino's show rendered as a real H.264 file was 5.5 MB. `plan` is 0 because a JSON show skips the language model; a free-text story adds the director's call, about 5 s. Times vary from run to run and machine to machine. On the hosted Space's shared CPU, the Froggy show took 30.6 s (voices 14.3 s, MoMask 10.8 s, IK and retarget 3.9 s). The saved shows in `app/client/story/demo/*/timeline.json` carry the stats from when they were made.
 
 ## API
 
