@@ -15,8 +15,8 @@ license: mit
 
 ITCS 6166 (Computer Communication and Networks), Topic 2: Generative AI as a Service. Team 2:
 
-- **Pablo Garces**: server (model, hosting, network measurements).
-- **Ramisha Mahiyat**: client (Three.js character, story player).
+- **Pablo Garces**
+- **Ramisha Mahiyat**
 
 **Try it online:** https://pgarces-momask-team2.hf.space/tinystage/
 
